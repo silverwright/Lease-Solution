@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
-import { useLeaseContext } from '../context/LeaseContext';
-import { FileText, Download, Calendar, DollarSign, BarChart3, AlertCircle } from 'lucide-react';
+import { useLeaseContext, SavedContract } from '../context/LeaseContext';
+import { FileText, Download, Calendar, DollarSign, BarChart3, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/UI/Button';
+import { ContractSelector } from '../components/Contract/ContractSelector';
 
 export function DisclosureJournals() {
-  const { state } = useLeaseContext();
+  const { state, dispatch } = useLeaseContext();
   const { calculations, leaseData } = state;
   const [activeTab, setActiveTab] = useState('journals');
+  const [selectedContract, setSelectedContract] = useState<SavedContract | null>(null);
 
   const hasCalculations = !!calculations;
+
+  const handleSelectContract = (contract: SavedContract) => {
+    setSelectedContract(contract);
+    dispatch({ type: 'LOAD_CONTRACT', payload: contract.data });
+    dispatch({ type: 'SET_MODE', payload: contract.mode });
+  };
+
+  const handleBackToSelection = () => {
+    setSelectedContract(null);
+    dispatch({ type: 'RESET' });
+  };
 
   const tabs = [
     { id: 'journals', name: 'Journal Entries', icon: FileText },
@@ -57,14 +70,31 @@ export function DisclosureJournals() {
         <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
           <FileText className="w-6 h-6 text-indigo-600" />
         </div>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold text-slate-900">Disclosure & Journal Entries</h1>
           <p className="text-slate-600">IFRS 16 compliant disclosures and accounting entries</p>
         </div>
+        {selectedContract && (
+          <Button
+            variant="outline"
+            onClick={handleBackToSelection}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Contract Selection
+          </Button>
+        )}
       </div>
 
+      {/* Contract Selector */}
+      {!selectedContract && (
+        <div className="bg-white rounded-lg border border-slate-200 shadow p-6">
+          <ContractSelector onSelect={handleSelectContract} />
+        </div>
+      )}
+
       {/* Missing Calculations Warning */}
-      {!hasCalculations && (
+      {selectedContract && !hasCalculations && (
         <div className="bg-amber-50 rounded-lg border border-amber-200 p-6 flex items-start gap-4">
           <div className="flex-shrink-0 mt-1">
             <AlertCircle className="w-6 h-6 text-amber-600" />
@@ -78,7 +108,7 @@ export function DisclosureJournals() {
         </div>
       )}
 
-      {hasCalculations && (
+      {selectedContract && hasCalculations && (
         <>
           {/* Export Button */}
           <div className="flex justify-end">
