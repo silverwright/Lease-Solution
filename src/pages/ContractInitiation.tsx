@@ -95,8 +95,14 @@ export function ContractInitiation() {
   };
 
   const handleCSVUploadComplete = () => {
+    setModeSelected(true);
     setActiveTab('form');
     setCurrentStep(1);
+  };
+
+  const handleModeRequired = () => {
+    setModeSelected(false);
+    setActiveTab('form');
   };
 
   if (!modeSelected && activeTab !== 'list') {
@@ -174,7 +180,10 @@ export function ContractInitiation() {
           )}
 
           {activeTab === 'upload' && (
-            <CSVUpload onUploadComplete={handleCSVUploadComplete} />
+            <CSVUpload
+              onUploadComplete={handleCSVUploadComplete}
+              onModeRequired={handleModeRequired}
+            />
           )}
 
           {activeTab === 'form' && modeSelected && (
@@ -194,8 +203,8 @@ export function ContractInitiation() {
                   onClick={resetMode}
                   className="flex items-center gap-2"
                 >
-                  <RefreshCw className="w-4 h-4" />
-                  Back to Contract List
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Mode Selection
                 </Button>
 
                 <div className="flex gap-2">

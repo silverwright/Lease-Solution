@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useLeaseContext } from '../../context/LeaseContext';
 import { Button } from '../UI/Button';
-import { Download, FileText, Eye } from 'lucide-react';
+import { Download, FileText, Eye, ArrowLeft } from 'lucide-react';
 import { generateContractHTML } from '../../utils/contractGenerator';
 import { useRef } from 'react';
+import jsPDF from 'jspdf';
 
 export function ContractPreview() {
   const { state, dispatch } = useLeaseContext();
@@ -18,17 +19,115 @@ export function ContractPreview() {
   }, [leaseData, mode, dispatch]);
 
   const downloadContract = () => {
-    if (contractHtml) {
-      const blob = new Blob([contractHtml], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `LeaseContract_${mode.toLowerCase()}_${leaseData.ContractID}.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+    if (!contractHtml) return;
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 15;
+    const maxWidth = pageWidth - 2 * margin;
+    let yPosition = margin;
+
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = contractHtml;
+
+    // Helper to check if we need a new page
+    const checkPageBreak = (increment: number) => {
+      if (yPosition + increment > pageHeight - margin) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+    };
+
+    // Process all elements
+    const processElement = (element: Element) => {
+      const tagName = element.tagName.toLowerCase();
+      const text = element.textContent?.trim() || '';
+
+      if (!text) return;
+
+      switch (tagName) {
+        case 'h1':
+          checkPageBreak(15);
+          pdf.setFontSize(18);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(text, pageWidth / 2, yPosition, { align: 'center' });
+          yPosition += 12;
+          break;
+
+        case 'h2':
+          checkPageBreak(12);
+          pdf.setFontSize(14);
+          pdf.setFont('helvetica', 'bold');
+          const lines = pdf.splitTextToSize(text, maxWidth);
+          pdf.text(lines, margin, yPosition);
+          yPosition += lines.length * 7 + 4;
+          break;
+
+        case 'h4':
+        case 'h5':
+          checkPageBreak(10);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(text, margin, yPosition);
+          yPosition += 8;
+          break;
+
+        case 'p':
+          checkPageBreak(10);
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'normal');
+          const pLines = pdf.splitTextToSize(text, maxWidth);
+          pdf.text(pLines, margin, yPosition);
+          yPosition += pLines.length * 5 + 3;
+          break;
+
+        case 'table':
+          checkPageBreak(20);
+          pdf.setFontSize(9);
+          const rows = Array.from(element.querySelectorAll('tr'));
+          rows.forEach((row) => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            if (cells.length === 2) {
+              checkPageBreak(10);
+              const label = cells[0].textContent?.trim() || '';
+              const value = cells[1].textContent?.trim() || '';
+
+              pdf.setFont('helvetica', 'bold');
+              pdf.text(label, margin, yPosition);
+
+              pdf.setFont('helvetica', 'normal');
+              const valueLines = pdf.splitTextToSize(value, maxWidth - 50);
+              pdf.text(valueLines, margin + 50, yPosition);
+
+              yPosition += Math.max(valueLines.length * 4.5, 6);
+            }
+          });
+          yPosition += 5;
+          break;
+
+        case 'li':
+          checkPageBreak(8);
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'normal');
+          const liLines = pdf.splitTextToSize('• ' + text, maxWidth - 5);
+          pdf.text(liLines, margin + 5, yPosition);
+          yPosition += liLines.length * 5 + 2;
+          break;
+
+        case 'div':
+          // Process child elements
+          Array.from(element.children).forEach(child => processElement(child));
+          break;
+      }
+    };
+
+    // Process all children
+    Array.from(tempDiv.children).forEach(child => processElement(child));
+
+    // Save the PDF
+    pdf.save(`LeaseContract_${mode.toLowerCase()}_${leaseData.ContractID}.pdf`);
   };
 
   
@@ -45,7 +144,7 @@ export function ContractPreview() {
             className="flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
-            Download HTML
+            Download PDF
           </Button>
         </div>
       </div>

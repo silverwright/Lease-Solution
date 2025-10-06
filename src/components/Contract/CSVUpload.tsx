@@ -5,9 +5,10 @@ import { Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface CSVUploadProps {
   onUploadComplete: () => void;
+  onModeRequired: () => void;
 }
 
-export function CSVUpload({ onUploadComplete }: CSVUploadProps) {
+export function CSVUpload({ onUploadComplete, onModeRequired }: CSVUploadProps) {
   const { dispatch } = useLeaseContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -107,10 +108,11 @@ export function CSVUpload({ onUploadComplete }: CSVUploadProps) {
       const text = await file.text();
       const csvData = parseCSV(text);
       const leaseData = mapCSVToLeaseData(csvData);
-      
+
       dispatch({ type: 'SET_LEASE_DATA', payload: leaseData });
       setUploadStatus('success');
       setTimeout(() => {
+        onModeRequired();
         onUploadComplete();
       }, 1500);
     } catch (error) {
