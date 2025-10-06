@@ -116,6 +116,9 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
           return;
         }
 
+        const mode = (row.Mode || row.mode || 'MINIMAL').toUpperCase();
+        const validMode = mode === 'FULL' ? 'FULL' : 'MINIMAL';
+
         const contract: SavedContract = {
           id: Date.now().toString() + '-' + index,
           contractId: leaseData.ContractID,
@@ -127,7 +130,7 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           data: leaseData,
-          mode: 'MINIMAL'
+          mode: validMode
         };
 
         contracts.push(contract);
@@ -215,6 +218,7 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
           <h5 className="font-medium text-slate-900 mb-2">Expected Excel Format:</h5>
           <p className="text-sm text-slate-600 mb-3">
             Your Excel file should have column headers in the first row. Each subsequent row represents one contract.
+            Include a "Mode" column with values "MINIMAL" or "FULL" to set the mode for each contract.
           </p>
           <div className="bg-white rounded border border-slate-200 overflow-x-auto">
             <table className="min-w-full text-xs">
@@ -248,6 +252,8 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
           <p className="text-xs text-slate-500 mt-3">
             <strong>Required columns:</strong> Contract ID, Lessee Entity, Lessor Name, Asset Description,
             Commencement Date, Non-cancellable Years, Fixed Payment, Payment Frequency, Currency, IBR Annual
+            <br />
+            <strong>Optional:</strong> Mode (MINIMAL or FULL, defaults to MINIMAL)
           </p>
         </div>
       </div>
