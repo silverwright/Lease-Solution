@@ -49,7 +49,7 @@ export function ContractInitiation() {
   const resetMode = () => {
     setModeSelected(false);
     setCurrentStep(1);
-    setActiveTab('list');
+    setActiveTab('form');
     setEditingContract(null);
     dispatch({ type: 'RESET' });
   };
