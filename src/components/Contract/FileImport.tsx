@@ -55,29 +55,34 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
       'LesseeEntity': 'LesseeEntity',
       'Lessor Name': 'LessorName',
       'LessorName': 'LessorName',
-      'Asset Description': 'AssetDescription',
-      'AssetDescription': 'AssetDescription',
       'Asset Class': 'AssetClass',
       'AssetClass': 'AssetClass',
+      'Asset Description': 'AssetDescription',
+      'AssetDescription': 'AssetDescription',
       'Contract Date': 'ContractDate',
       'ContractDate': 'ContractDate',
       'Commencement Date': 'CommencementDate',
       'CommencementDate': 'CommencementDate',
       'End Date': 'EndDateOriginal',
       'EndDateOriginal': 'EndDateOriginal',
+      'Original End Date': 'EndDateOriginal',
       'Non-cancellable Years': 'NonCancellableYears',
       'NonCancellableYears': 'NonCancellableYears',
+      'Non-cancellable Period': 'NonCancellableYears',
+      'Useful Life Years': 'UsefulLifeYears',
+      'UsefulLifeYears': 'UsefulLifeYears',
+      'Useful Life': 'UsefulLifeYears',
       'Fixed Payment': 'FixedPaymentPerPeriod',
       'FixedPaymentPerPeriod': 'FixedPaymentPerPeriod',
+      'Fixed Payment Per Period': 'FixedPaymentPerPeriod',
+      'Currency': 'Currency',
       'Payment Frequency': 'PaymentFrequency',
       'PaymentFrequency': 'PaymentFrequency',
       'Payment Timing': 'PaymentTiming',
       'PaymentTiming': 'PaymentTiming',
-      'Currency': 'Currency',
       'IBR Annual': 'IBR_Annual',
       'IBR_Annual': 'IBR_Annual',
-      'Useful Life Years': 'UsefulLifeYears',
-      'UsefulLifeYears': 'UsefulLifeYears',
+      'IBR': 'IBR_Annual',
     };
 
     const leaseData: any = {};
@@ -105,6 +110,10 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
         leaseData[leaseKey] = value;
       }
     });
+
+    if (!leaseData.PaymentFrequency) leaseData.PaymentFrequency = 'Monthly';
+    if (!leaseData.PaymentTiming) leaseData.PaymentTiming = 'Advance';
+    if (!leaseData.Currency) leaseData.Currency = 'NGN';
 
     return leaseData;
   };
@@ -371,9 +380,10 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
                 Your CSV should include these column headers (first row):
               </p>
               <div className="text-xs text-slate-500 font-mono bg-white p-2 rounded border">
-                Contract ID, Lessee Entity, Lessor Name, Asset Description, Asset Class,
-                Commencement Date, Non-cancellable Years, Fixed Payment, Payment Frequency,
-                Currency, IBR Annual
+                Contract ID, Lessee Entity, Lessor Name, Asset Class, Asset Description,
+                Contract Date, Commencement Date, Original End Date, Non-cancellable Period,
+                Useful Life, Fixed Payment Per Period, Currency, Payment Frequency,
+                Payment Timing, IBR Annual
               </div>
             </>
           ) : (
@@ -412,8 +422,10 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
                 </table>
               </div>
               <p className="text-xs text-slate-500 mt-3">
-                <strong>Required columns:</strong> Contract ID, Lessee Entity, Lessor Name, Asset Description,
-                Commencement Date, Non-cancellable Years, Fixed Payment, Payment Frequency, Currency, IBR Annual
+                <strong>Required columns:</strong> Contract ID, Lessee Entity, Lessor Name, Asset Class,
+                Asset Description, Contract Date, Commencement Date, Original End Date,
+                Non-cancellable Period, Useful Life, Fixed Payment Per Period, Currency,
+                Payment Frequency, Payment Timing, IBR Annual
                 <br />
                 <strong>Optional:</strong> Mode (MINIMAL or FULL, overrides the default mode selected above)
               </p>
