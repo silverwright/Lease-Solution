@@ -114,8 +114,8 @@ export function PaymentDetailsForm() {
             label="IBR (Annual %)"
             type="number"
             step="0.01"
-            value={leaseData.IBR_Annual ? (leaseData.IBR_Annual * 100).toString() : ''}
-            onChange={(value) => updateField('IBR_Annual', Number(value) / 100)}
+            value={leaseData.IBR_Annual ? (Math.round(leaseData.IBR_Annual * 10000) / 100).toString() : ''}
+            onChange={(value) => updateField('IBR_Annual', Math.round(Number(value) * 100) / 10000)}
             placeholder="14"
             required
           />
