@@ -266,33 +266,6 @@ export function AdvancedOptionsForm() {
               </div>
       </div>
 
-
-        {/* Bank Payment Details */}
-          <div className="border-t pt-6 space-y-4">
-            <h4 className="text-md font-semibold text-slate-900">Bank Payment Details</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  label="Lessor Bank Name"
-                  value={leaseData.BankName || ''}
-                  onChange={(v) => updateField('BankName', v)}
-                  placeholder="First Bank Nigeria"
-                />
-                <FormField
-                  label="Account Name"
-                  value={leaseData.BankAccountName || ''}
-                  onChange={(v) => updateField('BankAccountName', v)}
-                  placeholder="ABC Leasing Ltd"
-                />
-                <FormField
-                  label="Account Number / IBAN"
-                  value={leaseData.BankAccountNo || ''}
-                  onChange={(v) => updateField('BankAccountNo', v)}
-                  placeholder="1234567890"
-                />
-              </div>
-      </div>
-
-
         </div>
       )}
 
