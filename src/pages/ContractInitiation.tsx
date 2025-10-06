@@ -5,8 +5,7 @@ import { BasicInfoForm } from '../components/Contract/BasicInfoForm';
 import { PaymentDetailsForm } from '../components/Contract/PaymentDetailsForm';
 import { AdvancedOptionsForm } from '../components/Contract/AdvancedOptionsForm';
 import { ContractPreview } from '../components/Contract/ContractPreview';
-import { CSVUpload } from '../components/Contract/CSVUpload';
-import { ExcelBulkUpload } from '../components/Contract/ExcelBulkUpload';
+import { FileImport } from '../components/Contract/FileImport';
 import { ContractList } from '../components/Contract/ContractList';
 import { ProgressBar } from '../components/UI/ProgressBar';
 import { Button } from '../components/UI/Button';
@@ -23,7 +22,7 @@ export function ContractInitiation() {
   const { state, dispatch } = useLeaseContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [modeSelected, setModeSelected] = useState(false);
-  const [activeTab, setActiveTab] = useState<'form' | 'upload' | 'bulk' | 'list'>('list');
+  const [activeTab, setActiveTab] = useState<'form' | 'import' | 'list'>('list');
   const [editingContract, setEditingContract] = useState<SavedContract | null>(null);
 
   const CurrentStepComponent =
@@ -152,8 +151,7 @@ export function ContractInitiation() {
             {[
               { id: 'list', name: 'Contract List', icon: FileText },
               { id: 'form', name: 'Create/Edit Contract', icon: FileText },
-              { id: 'upload', name: 'CSV Import', icon: Upload },
-              { id: 'bulk', name: 'Excel Bulk Import', icon: Upload },
+              { id: 'import', name: 'Import Contracts', icon: Upload },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -181,16 +179,10 @@ export function ContractInitiation() {
             />
           )}
 
-          {activeTab === 'upload' && (
-            <CSVUpload
-              onUploadComplete={handleCSVUploadComplete}
-              onModeRequired={handleModeRequired}
-            />
-          )}
-
-          {activeTab === 'bulk' && (
-            <ExcelBulkUpload
+          {activeTab === 'import' && (
+            <FileImport
               onUploadComplete={() => setActiveTab('list')}
+              onModeRequired={handleModeRequired}
             />
           )}
 
