@@ -15,6 +15,7 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
   const { dispatch } = useLeaseContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedType, setSelectedType] = useState<ImportType>(null);
+  const [selectedMode, setSelectedMode] = useState<'MINIMAL' | 'FULL'>('MINIMAL');
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -141,8 +142,8 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
         return;
       }
 
-      const mode = (row.Mode || row.mode || 'MINIMAL').toUpperCase();
-      const validMode = mode === 'FULL' ? 'FULL' : 'MINIMAL';
+      const rowMode = row.Mode || row.mode;
+      const mode = rowMode ? (rowMode.toUpperCase() === 'FULL' ? 'FULL' : 'MINIMAL') : selectedMode;
 
       const contract: SavedContract = {
         id: Date.now().toString() + '-' + index,
@@ -155,7 +156,7 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         data: leaseData,
-        mode: validMode
+        mode: mode
       };
 
       contracts.push(contract);
@@ -271,6 +272,36 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
       </div>
 
       <div className="space-y-4">
+        <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+          <h4 className="font-medium text-slate-900 mb-3">Select Default Mode</h4>
+          <p className="text-sm text-slate-600 mb-3">
+            Choose the default mode for imported contracts. This will be used unless a "Mode" column specifies otherwise.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setSelectedMode('MINIMAL')}
+              className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
+                selectedMode === 'MINIMAL'
+                  ? 'border-blue-500 bg-blue-100 text-blue-900'
+                  : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300'
+              }`}
+            >
+              <div className="font-semibold">MINIMAL</div>
+              <div className="text-xs mt-1">Basic fields only</div>
+            </button>
+            <button
+              onClick={() => setSelectedMode('FULL')}
+              className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
+                selectedMode === 'FULL'
+                  ? 'border-blue-500 bg-blue-100 text-blue-900'
+                  : 'border-slate-300 bg-white text-slate-700 hover:border-blue-300'
+              }`}
+            >
+              <div className="font-semibold">FULL</div>
+              <div className="text-xs mt-1">All fields including legal</div>
+            </button>
+          </div>
+        </div>
         <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
           <div className="flex flex-col items-center space-y-4">
             <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
@@ -349,7 +380,7 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
             <>
               <p className="text-sm text-slate-600 mb-3">
                 Your Excel file should have column headers in the first row. Each subsequent row represents one contract.
-                Include a "Mode" column with values "MINIMAL" or "FULL" to set the mode for each contract.
+                All contracts will use the selected default mode above, unless a "Mode" column is included with "MINIMAL" or "FULL" values.
               </p>
               <div className="bg-white rounded border border-slate-200 overflow-x-auto">
                 <table className="min-w-full text-xs">
@@ -384,7 +415,7 @@ export function FileImport({ onUploadComplete, onModeRequired }: FileImportProps
                 <strong>Required columns:</strong> Contract ID, Lessee Entity, Lessor Name, Asset Description,
                 Commencement Date, Non-cancellable Years, Fixed Payment, Payment Frequency, Currency, IBR Annual
                 <br />
-                <strong>Optional:</strong> Mode (MINIMAL or FULL, defaults to MINIMAL)
+                <strong>Optional:</strong> Mode (MINIMAL or FULL, overrides the default mode selected above)
               </p>
             </>
           )}
