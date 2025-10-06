@@ -43,7 +43,9 @@ export function ContractInitiation() {
   const handleModeChange = (mode: 'MINIMAL' | 'FULL') => {
     dispatch({ type: 'SET_MODE', payload: mode });
     setModeSelected(true);
-    setActiveTab('form');
+    if (activeTab !== 'import') {
+      setActiveTab('form');
+    }
   };
 
   const resetMode = () => {
@@ -105,7 +107,7 @@ export function ContractInitiation() {
     setActiveTab('form');
   };
 
-  if (!modeSelected && activeTab !== 'list') {
+  if (!modeSelected && activeTab === 'form') {
     return (
       <div className="w-full min-h-screen p-6 space-y-6 bg-slate-100">
         <div className="bg-white rounded-lg border border-slate-200 p-6 flex items-start gap-3 shadow">
