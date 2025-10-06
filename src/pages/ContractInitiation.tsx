@@ -4,6 +4,7 @@ import { ModeSelector } from '../components/Contract/ModeSelector';
 import { BasicInfoForm } from '../components/Contract/BasicInfoForm';
 import { PaymentDetailsForm } from '../components/Contract/PaymentDetailsForm';
 import { AdvancedOptionsForm } from '../components/Contract/AdvancedOptionsForm';
+import { LegalAdminForm } from '../components/Contract/LegalAdminForm';
 import { ContractPreview } from '../components/Contract/ContractPreview';
 import { FileImport } from '../components/Contract/FileImport';
 import { ContractList } from '../components/Contract/ContractList';
@@ -15,7 +16,8 @@ const steps = [
   { id: 1, name: 'Basic Info', component: BasicInfoForm },
   { id: 2, name: 'Payment Details', component: PaymentDetailsForm },
   { id: 3, name: 'Advanced Options', component: AdvancedOptionsForm },
-  { id: 4, name: 'Preview & Generate', component: ContractPreview },
+  { id: 4, name: 'Legal & Administrative', component: LegalAdminForm },
+  { id: 5, name: 'Preview & Generate', component: ContractPreview },
 ];
 
 export function ContractInitiation() {
@@ -25,18 +27,29 @@ export function ContractInitiation() {
   const [activeTab, setActiveTab] = useState<'form' | 'import' | 'list'>('list');
   const [editingContract, setEditingContract] = useState<SavedContract | null>(null);
 
+  // Filter steps based on mode
+  const activeSteps = state.mode === 'FULL'
+    ? steps
+    : steps.filter(step => step.name !== 'Legal & Administrative');
+
   const CurrentStepComponent =
-    steps.find(step => step.id === currentStep)?.component || BasicInfoForm;
+    activeSteps.find(step => step.id === currentStep)?.component || BasicInfoForm;
 
   const nextStep = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+    if (currentStep < activeSteps.length) {
+      // Find next step ID in activeSteps
+      const currentIndex = activeSteps.findIndex(s => s.id === currentStep);
+      if (currentIndex < activeSteps.length - 1) {
+        setCurrentStep(activeSteps[currentIndex + 1].id);
+      }
     }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+    // Find previous step ID in activeSteps
+    const currentIndex = activeSteps.findIndex(s => s.id === currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(activeSteps[currentIndex - 1].id);
     }
   };
 
@@ -191,7 +204,7 @@ export function ContractInitiation() {
           {activeTab === 'form' && modeSelected && (
             <div className="space-y-6">
               {/* Progress Bar */}
-              <ProgressBar steps={steps} currentStep={currentStep} />
+              <ProgressBar steps={activeSteps} currentStep={currentStep} />
 
               {/* Form Content */}
               <div className="bg-slate-50 rounded-lg border border-slate-200 p-6">
@@ -230,7 +243,7 @@ export function ContractInitiation() {
                     Save Contract
                   </Button>
 
-                  {currentStep < steps.length ? (
+                  {currentStep < activeSteps[activeSteps.length - 1].id ? (
                     <Button onClick={nextStep} className="flex items-center gap-2">
                       Next
                       <ArrowRight className="w-4 h-4" />
