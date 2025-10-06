@@ -158,6 +158,37 @@ export function PaymentDetailsForm() {
           </div>
         </div>
       </div>
+
+      {/* Bank Payment Details */}
+      <div className="border-t pt-6">
+        <h4 className="text-md font-semibold text-slate-900 mb-4">Bank Payment Details</h4>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            label="Bank Name"
+            type="text"
+            value={leaseData.BankName || ''}
+            onChange={(value) => updateField('BankName', value)}
+            placeholder="First Bank of Nigeria"
+          />
+
+          <FormField
+            label="Account Name"
+            type="text"
+            value={leaseData.BankAccountName || ''}
+            onChange={(value) => updateField('BankAccountName', value)}
+            placeholder="XYZ Leasing Limited"
+          />
+
+          <FormField
+            label="Account Number"
+            type="text"
+            value={leaseData.BankAccountNo || ''}
+            onChange={(value) => updateField('BankAccountNo', value)}
+            placeholder="1234567890"
+          />
+        </div>
+      </div>
     </div>
   );
 }
