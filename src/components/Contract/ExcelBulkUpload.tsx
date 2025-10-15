@@ -23,6 +23,7 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
 
   const mapExcelRowToLeaseData = (row: any) => {
     const mapping: { [key: string]: string } = {
+      // Basic identifiers
       'Contract ID': 'ContractID',
       'ContractID': 'ContractID',
       'Lessee Entity': 'LesseeEntity',
@@ -33,6 +34,8 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
       'AssetClass': 'AssetClass',
       'Asset Description': 'AssetDescription',
       'AssetDescription': 'AssetDescription',
+
+      // Dates
       'Contract Date': 'ContractDate',
       'ContractDate': 'ContractDate',
       'Commencement Date': 'CommencementDate',
@@ -40,12 +43,23 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
       'End Date': 'EndDateOriginal',
       'EndDateOriginal': 'EndDateOriginal',
       'Original End Date': 'EndDateOriginal',
+
+      // Term & Options
       'Non-cancellable Years': 'NonCancellableYears',
       'NonCancellableYears': 'NonCancellableYears',
       'Non-cancellable Period': 'NonCancellableYears',
-      'Useful Life Years': 'UsefulLifeYears',
-      'UsefulLifeYears': 'UsefulLifeYears',
-      'Useful Life': 'UsefulLifeYears',
+      'Renewal Option Years': 'RenewalOptionYears',
+      'RenewalOptionYears': 'RenewalOptionYears',
+      'Renewal Likelihood': 'RenewalOptionLikelihood',
+      'RenewalOptionLikelihood': 'RenewalOptionLikelihood',
+      'Termination Option Point': 'TerminationOptionPoint',
+      'TerminationOptionPoint': 'TerminationOptionPoint',
+      'Termination Penalty Expected': 'TerminationPenaltyExpected',
+      'TerminationPenaltyExpected': 'TerminationPenaltyExpected',
+      'Termination Reasonably Certain': 'TerminationReasonablyCertain',
+      'TerminationReasonablyCertain': 'TerminationReasonablyCertain',
+
+      // Payments
       'Fixed Payment': 'FixedPaymentPerPeriod',
       'FixedPaymentPerPeriod': 'FixedPaymentPerPeriod',
       'Fixed Payment Per Period': 'FixedPaymentPerPeriod',
@@ -54,9 +68,119 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
       'PaymentFrequency': 'PaymentFrequency',
       'Payment Timing': 'PaymentTiming',
       'PaymentTiming': 'PaymentTiming',
+
+      // Escalation
+      'Escalation Type': 'EscalationType',
+      'EscalationType': 'EscalationType',
+      'Base CPI': 'BaseCPI',
+      'BaseCPI': 'BaseCPI',
+      'CPI Reset Month': 'CPIResetMonth',
+      'CPIResetMonth': 'CPIResetMonth',
+      'First Reset Year Offset': 'FirstResetYearOffset',
+      'FirstResetYearOffset': 'FirstResetYearOffset',
+      'Fixed Escalation Pct': 'FixedEscalationPct',
+      'FixedEscalationPct': 'FixedEscalationPct',
+
+      // Variable & Other
+      'Variable Payments In Substance Fixed': 'VariablePaymentsInSubstanceFixed',
+      'VariablePaymentsInSubstanceFixed': 'VariablePaymentsInSubstanceFixed',
+      'Variable Payments Usage Expected': 'VariablePaymentsUsageExpected',
+      'VariablePaymentsUsageExpected': 'VariablePaymentsUsageExpected',
+      'RVG Expected': 'RVGExpected',
+      'RVGExpected': 'RVGExpected',
+      'RVG Reasonably Certain': 'RVGReasonablyCertain',
+      'RVGReasonablyCertain': 'RVGReasonablyCertain',
+      'Purchase Option Price': 'PurchaseOptionPrice',
+      'PurchaseOptionPrice': 'PurchaseOptionPrice',
+      'Purchase Option Reasonably Certain': 'PurchaseOptionReasonablyCertain',
+      'PurchaseOptionReasonablyCertain': 'PurchaseOptionReasonablyCertain',
+
+      // ROU Adjustments
+      'Initial Direct Costs': 'InitialDirectCosts',
+      'InitialDirectCosts': 'InitialDirectCosts',
+      'Prepayments Before Commencement': 'PrepaymentsBeforeCommencement',
+      'PrepaymentsBeforeCommencement': 'PrepaymentsBeforeCommencement',
+      'Lease Incentives': 'LeaseIncentives',
+      'LeaseIncentives': 'LeaseIncentives',
+      'Prepaid First Payment': 'PrepaidFirstPayment',
+      'PrepaidFirstPayment': 'PrepaidFirstPayment',
+
+      // Currency & Rates
       'IBR Annual': 'IBR_Annual',
       'IBR_Annual': 'IBR_Annual',
       'IBR': 'IBR_Annual',
+      'FX Policy': 'FXPolicy',
+      'FXPolicy': 'FXPolicy',
+
+      // Asset Life
+      'Useful Life Years': 'UsefulLifeYears',
+      'UsefulLifeYears': 'UsefulLifeYears',
+      'Useful Life': 'UsefulLifeYears',
+
+      // Policy Flags
+      'Low Value Exemption': 'LowValueExemption',
+      'LowValueExemption': 'LowValueExemption',
+      'Short Term Exemption': 'ShortTermExemption',
+      'ShortTermExemption': 'ShortTermExemption',
+      'Separate Non Lease Components': 'SeparateNonLeaseComponents',
+      'SeparateNonLeaseComponents': 'SeparateNonLeaseComponents',
+      'Allocation Basis': 'AllocationBasis',
+      'AllocationBasis': 'AllocationBasis',
+
+      // Governance
+      'Judgement Notes': 'JudgementNotes',
+      'JudgementNotes': 'JudgementNotes',
+      'Approval Signoff': 'ApprovalSignoff',
+      'ApprovalSignoff': 'ApprovalSignoff',
+
+      // Full mode extensions (Legal & Administrative)
+      'Lessor Jurisdiction': 'LessorJurisdiction',
+      'LessorJurisdiction': 'LessorJurisdiction',
+      'Lessee Jurisdiction': 'LesseeJurisdiction',
+      'LesseeJurisdiction': 'LesseeJurisdiction',
+      'Lessor Address': 'LessorAddress',
+      'LessorAddress': 'LessorAddress',
+      'Lessee Address': 'LesseeAddress',
+      'LesseeAddress': 'LesseeAddress',
+      'Lessor RC Number': 'LessorRCNumber',
+      'LessorRCNumber': 'LessorRCNumber',
+      'Lessee RC Number': 'LesseeRCNumber',
+      'LesseeRCNumber': 'LesseeRCNumber',
+      'Asset Location': 'AssetLocation',
+      'AssetLocation': 'AssetLocation',
+      'Delivery Date Latest': 'DeliveryDateLatest',
+      'DeliveryDateLatest': 'DeliveryDateLatest',
+      'Risk Transfer Event': 'RiskTransferEvent',
+      'RiskTransferEvent': 'RiskTransferEvent',
+      'Insurance Sum Insured': 'InsuranceSumInsured',
+      'InsuranceSumInsured': 'InsuranceSumInsured',
+      'Insurance TP Limit': 'InsuranceTPLimit',
+      'InsuranceTPLimit': 'InsuranceTPLimit',
+      'Insurer Rating Min': 'InsurerRatingMin',
+      'InsurerRatingMin': 'InsurerRatingMin',
+      'Permitted Use': 'PermittedUse',
+      'PermittedUse': 'PermittedUse',
+      'Move Restriction': 'MoveRestriction',
+      'MoveRestriction': 'MoveRestriction',
+      'Software License': 'SoftwareLicense',
+      'SoftwareLicense': 'SoftwareLicense',
+      'Bank Name': 'BankName',
+      'BankName': 'BankName',
+      'Bank Account Name': 'BankAccountName',
+      'BankAccountName': 'BankAccountName',
+      'Bank Account No': 'BankAccountNo',
+      'BankAccountNo': 'BankAccountNo',
+      'Arbitration Rules': 'ArbitrationRules',
+      'ArbitrationRules': 'ArbitrationRules',
+      'Seat Of Arbitration': 'SeatOfArbitration',
+      'SeatOfArbitration': 'SeatOfArbitration',
+      'Language': 'Language',
+      'Governing Law': 'GoverningLaw',
+      'GoverningLaw': 'GoverningLaw',
+      'Lessor Signatory Title': 'LessorSignatoryTitle',
+      'LessorSignatoryTitle': 'LessorSignatoryTitle',
+      'Lessee Signatory Title': 'LesseeSignatoryTitle',
+      'LesseeSignatoryTitle': 'LesseeSignatoryTitle',
     };
 
     const leaseData: any = {};
@@ -65,14 +189,40 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
       if (leaseKey && row[excelKey] !== undefined && row[excelKey] !== null && row[excelKey] !== '') {
         let value = row[excelKey];
 
-        if (['NonCancellableYears', 'FixedPaymentPerPeriod', 'IBR_Annual', 'UsefulLifeYears'].includes(leaseKey)) {
+        // Handle numeric fields
+        const numericFields = [
+          'NonCancellableYears', 'RenewalOptionYears', 'RenewalOptionLikelihood',
+          'TerminationPenaltyExpected', 'FixedPaymentPerPeriod', 'BaseCPI',
+          'CPIResetMonth', 'FirstResetYearOffset', 'FixedEscalationPct',
+          'VariablePaymentsInSubstanceFixed', 'VariablePaymentsUsageExpected',
+          'RVGExpected', 'PurchaseOptionPrice', 'InitialDirectCosts',
+          'PrepaymentsBeforeCommencement', 'LeaseIncentives', 'IBR_Annual',
+          'UsefulLifeYears', 'InsuranceSumInsured', 'InsuranceTPLimit'
+        ];
+
+        if (numericFields.includes(leaseKey)) {
           value = parseFloat(value);
-          if (leaseKey === 'IBR_Annual' && value > 1) {
+          // Convert percentages if greater than 1
+          if (['IBR_Annual', 'RenewalOptionLikelihood', 'FixedEscalationPct'].includes(leaseKey) && value > 1) {
             value = value / 100;
           }
         }
 
-        if (['ContractDate', 'CommencementDate', 'EndDateOriginal'].includes(leaseKey)) {
+        // Handle boolean fields
+        const booleanFields = [
+          'TerminationReasonablyCertain', 'RVGReasonablyCertain',
+          'PurchaseOptionReasonablyCertain', 'PrepaidFirstPayment',
+          'LowValueExemption', 'ShortTermExemption', 'SeparateNonLeaseComponents'
+        ];
+
+        if (booleanFields.includes(leaseKey)) {
+          const strValue = String(value).toLowerCase();
+          value = strValue === 'true' || strValue === 'yes' || strValue === '1' || strValue === 'y';
+        }
+
+        // Handle date fields
+        const dateFields = ['ContractDate', 'CommencementDate', 'EndDateOriginal', 'DeliveryDateLatest'];
+        if (dateFields.includes(leaseKey)) {
           if (typeof value === 'number') {
             const date = XLSX.SSF.parse_date_code(value);
             value = `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
@@ -289,14 +439,104 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-500 mt-3">
-            <strong>Required columns:</strong> Contract ID, Lessee Entity, Lessor Name, Asset Class,
-            Asset Description, Contract Date, Commencement Date, Original End Date,
-            Non-cancellable Period, Useful Life, Fixed Payment Per Period, Currency,
-            Payment Frequency, Payment Timing, IBR Annual
-            <br />
-            <strong>Optional:</strong> Mode (MINIMAL or FULL, overrides the default mode selected above)
-          </p>
+          <div className="text-xs text-slate-600 mt-4 space-y-3">
+            <div>
+              <p className="font-semibold text-slate-900 mb-2">Required Columns (in this exact order):</p>
+              <ol className="list-decimal list-inside space-y-1 ml-2">
+                <li><strong>Contract ID</strong> - Unique identifier for the contract</li>
+                <li><strong>Lessee Entity</strong> - Name of the lessee</li>
+                <li><strong>Lessor Name</strong> - Name of the lessor</li>
+                <li><strong>Asset Class</strong> - Type of asset (e.g., Office Equipment, Warehouse, Vehicle)</li>
+                <li><strong>Asset Description</strong> - Detailed description of the asset</li>
+                <li><strong>Contract Date</strong> - Date format: YYYY-MM-DD or Excel date</li>
+                <li><strong>Commencement Date</strong> - Date format: YYYY-MM-DD or Excel date</li>
+                <li><strong>Original End Date</strong> - Date format: YYYY-MM-DD or Excel date</li>
+                <li><strong>Non-cancellable Years</strong> - Number (e.g., 5)</li>
+                <li><strong>Useful Life Years</strong> - Number (e.g., 10)</li>
+                <li><strong>Fixed Payment Per Period</strong> - Number (e.g., 25000000)</li>
+                <li><strong>Currency</strong> - Text (e.g., NGN, USD, EUR, GBP)</li>
+                <li><strong>Payment Frequency</strong> - Text (Monthly, Quarterly, Semiannual, Annual)</li>
+                <li><strong>Payment Timing</strong> - Text (Advance or Arrears)</li>
+                <li><strong>IBR Annual</strong> - Number as decimal (e.g., 0.14 or 14 for 14%)</li>
+              </ol>
+            </div>
+
+            <div>
+              <p className="font-semibold text-slate-900 mb-2">Optional Columns - Payment Details:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong>Escalation Type</strong> - Text (None, CPI, Fixed%)</li>
+                <li><strong>Base CPI</strong> - Number (e.g., 250.0)</li>
+                <li><strong>CPI Reset Month</strong> - Number 1-12</li>
+                <li><strong>First Reset Year Offset</strong> - Number</li>
+                <li><strong>Fixed Escalation Pct</strong> - Decimal (e.g., 0.05 or 5 for 5%)</li>
+                <li><strong>Initial Direct Costs</strong> - Number</li>
+                <li><strong>Prepayments Before Commencement</strong> - Number</li>
+                <li><strong>Lease Incentives</strong> - Number</li>
+                <li><strong>Prepaid First Payment</strong> - Boolean (TRUE/FALSE, YES/NO, 1/0)</li>
+                <li><strong>Bank Name</strong> - Text</li>
+                <li><strong>Bank Account Name</strong> - Text</li>
+                <li><strong>Bank Account No</strong> - Text</li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold text-slate-900 mb-2">Optional Columns - Advanced Options:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong>Renewal Option Years</strong> - Number</li>
+                <li><strong>Renewal Likelihood</strong> - Decimal 0-1 (e.g., 0.7 or 70 for 70%)</li>
+                <li><strong>Termination Option Point</strong> - Text</li>
+                <li><strong>Termination Penalty Expected</strong> - Number</li>
+                <li><strong>Termination Reasonably Certain</strong> - Boolean (TRUE/FALSE, YES/NO, 1/0)</li>
+                <li><strong>Purchase Option Price</strong> - Number</li>
+                <li><strong>Purchase Option Reasonably Certain</strong> - Boolean</li>
+                <li><strong>RVG Expected</strong> - Number</li>
+                <li><strong>RVG Reasonably Certain</strong> - Boolean</li>
+                <li><strong>Variable Payments In Substance Fixed</strong> - Number</li>
+                <li><strong>Variable Payments Usage Expected</strong> - Number</li>
+                <li><strong>Low Value Exemption</strong> - Boolean</li>
+                <li><strong>Short Term Exemption</strong> - Boolean</li>
+                <li><strong>Separate Non Lease Components</strong> - Boolean</li>
+                <li><strong>Allocation Basis</strong> - Text</li>
+                <li><strong>FX Policy</strong> - Text</li>
+                <li><strong>Judgement Notes</strong> - Text</li>
+                <li><strong>Approval Signoff</strong> - Text</li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold text-slate-900 mb-2">Optional Columns - Legal & Administrative (FULL mode only):</p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong>Lessor Jurisdiction</strong> - Text</li>
+                <li><strong>Lessee Jurisdiction</strong> - Text</li>
+                <li><strong>Lessor Address</strong> - Text</li>
+                <li><strong>Lessee Address</strong> - Text</li>
+                <li><strong>Lessor RC Number</strong> - Text</li>
+                <li><strong>Lessee RC Number</strong> - Text</li>
+                <li><strong>Asset Location</strong> - Text</li>
+                <li><strong>Delivery Date Latest</strong> - Date format: YYYY-MM-DD or Excel date</li>
+                <li><strong>Risk Transfer Event</strong> - Text</li>
+                <li><strong>Insurance Sum Insured</strong> - Number</li>
+                <li><strong>Insurance TP Limit</strong> - Number</li>
+                <li><strong>Insurer Rating Min</strong> - Text</li>
+                <li><strong>Permitted Use</strong> - Text</li>
+                <li><strong>Move Restriction</strong> - Text</li>
+                <li><strong>Software License</strong> - Text</li>
+                <li><strong>Arbitration Rules</strong> - Text</li>
+                <li><strong>Seat Of Arbitration</strong> - Text</li>
+                <li><strong>Language</strong> - Text</li>
+                <li><strong>Governing Law</strong> - Text</li>
+                <li><strong>Lessor Signatory Title</strong> - Text</li>
+                <li><strong>Lessee Signatory Title</strong> - Text</li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold text-slate-900 mb-2">Special Column:</p>
+              <ul className="list-disc list-inside ml-2">
+                <li><strong>Mode</strong> - Text (MINIMAL or FULL) - Overrides default mode for specific rows</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
