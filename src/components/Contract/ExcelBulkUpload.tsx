@@ -441,99 +441,64 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
           </div>
           <div className="text-xs text-slate-600 mt-4 space-y-3">
             <div>
-              <p className="font-semibold text-slate-900 mb-2">Required Columns (in this exact order):</p>
-              <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li><strong>Contract ID</strong> - Unique identifier for the contract</li>
-                <li><strong>Lessee Entity</strong> - Name of the lessee</li>
-                <li><strong>Lessor Name</strong> - Name of the lessor</li>
-                <li><strong>Asset Class</strong> - Type of asset (e.g., Office Equipment, Warehouse, Vehicle)</li>
-                <li><strong>Asset Description</strong> - Detailed description of the asset</li>
-                <li><strong>Contract Date</strong> - Date format: YYYY-MM-DD or Excel date</li>
-                <li><strong>Commencement Date</strong> - Date format: YYYY-MM-DD or Excel date</li>
-                <li><strong>Original End Date</strong> - Date format: YYYY-MM-DD or Excel date</li>
-                <li><strong>Non-cancellable Years</strong> - Number (e.g., 5)</li>
-                <li><strong>Useful Life Years</strong> - Number (e.g., 10)</li>
-                <li><strong>Fixed Payment Per Period</strong> - Number (e.g., 25000000)</li>
-                <li><strong>Currency</strong> - Text (e.g., NGN, USD, EUR, GBP)</li>
-                <li><strong>Payment Frequency</strong> - Text (Monthly, Quarterly, Semiannual, Annual)</li>
-                <li><strong>Payment Timing</strong> - Text (Advance or Arrears)</li>
-                <li><strong>IBR Annual</strong> - Number as decimal (e.g., 0.14 or 14 for 14%)</li>
-              </ol>
+              <p className="font-semibold text-slate-900 mb-2">📋 All Available Columns (Headers for Excel File):</p>
+              <p className="text-slate-600 mb-3 italic">Copy these headers exactly as shown below into your Excel file's first row. Order doesn't matter - the system will auto-map them.</p>
             </div>
 
             <div>
-              <p className="font-semibold text-slate-900 mb-2">Optional Columns - Payment Details:</p>
-              <ul className="list-disc list-inside space-y-1 ml-2">
-                <li><strong>Escalation Type</strong> - Text (None, CPI, Fixed%)</li>
-                <li><strong>Base CPI</strong> - Number (e.g., 250.0)</li>
-                <li><strong>CPI Reset Month</strong> - Number 1-12</li>
-                <li><strong>First Reset Year Offset</strong> - Number</li>
-                <li><strong>Fixed Escalation Pct</strong> - Decimal (e.g., 0.05 or 5 for 5%)</li>
-                <li><strong>Initial Direct Costs</strong> - Number</li>
-                <li><strong>Prepayments Before Commencement</strong> - Number</li>
-                <li><strong>Lease Incentives</strong> - Number</li>
-                <li><strong>Prepaid First Payment</strong> - Boolean (TRUE/FALSE, YES/NO, 1/0)</li>
-                <li><strong>Bank Name</strong> - Text</li>
-                <li><strong>Bank Account Name</strong> - Text</li>
-                <li><strong>Bank Account No</strong> - Text</li>
-              </ul>
+              <p className="font-semibold text-slate-900 mb-2">✅ Required Columns (Must be present):</p>
+              <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-2">
+                <code className="text-xs">
+                  Contract ID | Lessee Entity | Lessor Name | Asset Class | Asset Description | Contract Date | Commencement Date | Original End Date | Non-cancellable Years | Useful Life Years | Fixed Payment Per Period | Currency | Payment Frequency | Payment Timing | IBR Annual
+                </code>
+              </div>
             </div>
 
             <div>
-              <p className="font-semibold text-slate-900 mb-2">Optional Columns - Advanced Options:</p>
-              <ul className="list-disc list-inside space-y-1 ml-2">
-                <li><strong>Renewal Option Years</strong> - Number</li>
-                <li><strong>Renewal Likelihood</strong> - Decimal 0-1 (e.g., 0.7 or 70 for 70%)</li>
-                <li><strong>Termination Option Point</strong> - Text</li>
-                <li><strong>Termination Penalty Expected</strong> - Number</li>
-                <li><strong>Termination Reasonably Certain</strong> - Boolean (TRUE/FALSE, YES/NO, 1/0)</li>
-                <li><strong>Purchase Option Price</strong> - Number</li>
-                <li><strong>Purchase Option Reasonably Certain</strong> - Boolean</li>
-                <li><strong>RVG Expected</strong> - Number</li>
-                <li><strong>RVG Reasonably Certain</strong> - Boolean</li>
-                <li><strong>Variable Payments In Substance Fixed</strong> - Number</li>
-                <li><strong>Variable Payments Usage Expected</strong> - Number</li>
-                <li><strong>Low Value Exemption</strong> - Boolean</li>
-                <li><strong>Short Term Exemption</strong> - Boolean</li>
-                <li><strong>Separate Non Lease Components</strong> - Boolean</li>
-                <li><strong>Allocation Basis</strong> - Text</li>
-                <li><strong>FX Policy</strong> - Text</li>
-                <li><strong>Judgement Notes</strong> - Text</li>
-                <li><strong>Approval Signoff</strong> - Text</li>
-              </ul>
+              <p className="font-semibold text-slate-900 mb-2">⚙️ Optional Columns - Payment Details:</p>
+              <div className="bg-slate-100 border border-slate-300 rounded p-3 mb-2">
+                <code className="text-xs break-words">
+                  Escalation Type | Base CPI | CPI Reset Month | First Reset Year Offset | Fixed Escalation Pct | Initial Direct Costs | Prepayments Before Commencement | Lease Incentives | Prepaid First Payment | Bank Name | Bank Account Name | Bank Account No
+                </code>
+              </div>
             </div>
 
             <div>
-              <p className="font-semibold text-slate-900 mb-2">Optional Columns - Legal & Administrative (FULL mode only):</p>
-              <ul className="list-disc list-inside space-y-1 ml-2">
-                <li><strong>Lessor Jurisdiction</strong> - Text</li>
-                <li><strong>Lessee Jurisdiction</strong> - Text</li>
-                <li><strong>Lessor Address</strong> - Text</li>
-                <li><strong>Lessee Address</strong> - Text</li>
-                <li><strong>Lessor RC Number</strong> - Text</li>
-                <li><strong>Lessee RC Number</strong> - Text</li>
-                <li><strong>Asset Location</strong> - Text</li>
-                <li><strong>Delivery Date Latest</strong> - Date format: YYYY-MM-DD or Excel date</li>
-                <li><strong>Risk Transfer Event</strong> - Text</li>
-                <li><strong>Insurance Sum Insured</strong> - Number</li>
-                <li><strong>Insurance TP Limit</strong> - Number</li>
-                <li><strong>Insurer Rating Min</strong> - Text</li>
-                <li><strong>Permitted Use</strong> - Text</li>
-                <li><strong>Move Restriction</strong> - Text</li>
-                <li><strong>Software License</strong> - Text</li>
-                <li><strong>Arbitration Rules</strong> - Text</li>
-                <li><strong>Seat Of Arbitration</strong> - Text</li>
-                <li><strong>Language</strong> - Text</li>
-                <li><strong>Governing Law</strong> - Text</li>
-                <li><strong>Lessor Signatory Title</strong> - Text</li>
-                <li><strong>Lessee Signatory Title</strong> - Text</li>
-              </ul>
+              <p className="font-semibold text-slate-900 mb-2">⚙️ Optional Columns - Advanced Options:</p>
+              <div className="bg-slate-100 border border-slate-300 rounded p-3 mb-2">
+                <code className="text-xs break-words">
+                  Renewal Option Years | Renewal Likelihood | Termination Option Point | Termination Penalty Expected | Termination Reasonably Certain | Purchase Option Price | Purchase Option Reasonably Certain | RVG Expected | RVG Reasonably Certain | Variable Payments In Substance Fixed | Variable Payments Usage Expected | Low Value Exemption | Short Term Exemption | Separate Non Lease Components | Allocation Basis | FX Policy | Judgement Notes | Approval Signoff
+                </code>
+              </div>
             </div>
 
             <div>
-              <p className="font-semibold text-slate-900 mb-2">Special Column:</p>
-              <ul className="list-disc list-inside ml-2">
-                <li><strong>Mode</strong> - Text (MINIMAL or FULL) - Overrides default mode for specific rows</li>
+              <p className="font-semibold text-slate-900 mb-2">⚙️ Optional Columns - Legal & Administrative (FULL mode):</p>
+              <div className="bg-slate-100 border border-slate-300 rounded p-3 mb-2">
+                <code className="text-xs break-words">
+                  Lessor Jurisdiction | Lessee Jurisdiction | Lessor Address | Lessee Address | Lessor RC Number | Lessee RC Number | Asset Location | Delivery Date Latest | Risk Transfer Event | Insurance Sum Insured | Insurance TP Limit | Insurer Rating Min | Permitted Use | Move Restriction | Software License | Arbitration Rules | Seat Of Arbitration | Language | Governing Law | Lessor Signatory Title | Lessee Signatory Title
+                </code>
+              </div>
+            </div>
+
+            <div>
+              <p className="font-semibold text-slate-900 mb-2">🔧 Special Column:</p>
+              <div className="bg-yellow-50 border border-yellow-300 rounded p-3 mb-2">
+                <code className="text-xs">
+                  Mode
+                </code>
+                <p className="text-xs text-slate-600 mt-1">Value: MINIMAL or FULL (overrides default mode for specific rows)</p>
+              </div>
+            </div>
+
+            <div className="border-t pt-3 mt-3">
+              <p className="font-semibold text-slate-900 mb-2">📝 Data Format Notes:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2 text-xs">
+                <li><strong>Dates:</strong> Use YYYY-MM-DD format or Excel date numbers</li>
+                <li><strong>Numbers:</strong> No currency symbols or commas (e.g., 25000000 not ₦25,000,000)</li>
+                <li><strong>Percentages:</strong> Can use decimal (0.14) or whole number (14) - both work</li>
+                <li><strong>Booleans:</strong> Use TRUE/FALSE, YES/NO, 1/0, or Y/N</li>
+                <li><strong>Text:</strong> Any text value is accepted</li>
               </ul>
             </div>
           </div>
