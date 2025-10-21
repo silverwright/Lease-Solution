@@ -185,7 +185,9 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
 
     const leaseData: any = {};
     Object.keys(row).forEach(excelKey => {
-      const leaseKey = mapping[excelKey];
+      // Trim whitespace from header names to handle Excel headers with leading/trailing spaces
+      const normalizedKey = excelKey.trim();
+      const leaseKey = mapping[normalizedKey];
       if (leaseKey && row[excelKey] !== undefined && row[excelKey] !== null && row[excelKey] !== '') {
         let value = row[excelKey];
 
