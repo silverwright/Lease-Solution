@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLeaseContext, SavedContract } from '../../context/LeaseContext';
 import { Button } from '../UI/Button';
-import { FileText, CreditCard as Edit, Eye, Trash2, Plus, Calendar, Building, User, CheckCircle, Clock } from 'lucide-react';
+import { FileText, CreditCard as Edit, Eye, Trash2, Plus, Calendar, Building, User, CheckCircle, Clock, Code } from 'lucide-react';
 
 interface ContractListProps {
   onEditContract: (contract: SavedContract) => void;
@@ -12,6 +12,8 @@ export function ContractList({ onEditContract, onNewContract }: ContractListProp
   const { state, dispatch } = useLeaseContext();
   const { savedContracts } = state;
   const [selectedContract, setSelectedContract] = useState<SavedContract | null>(null);
+  const [showDataModal, setShowDataModal] = useState(false);
+  const [dataToShow, setDataToShow] = useState<any>(null);
 
   const handleDeleteContract = (contractId: string) => {
     if (confirm('Are you sure you want to delete this contract?')) {
@@ -21,6 +23,11 @@ export function ContractList({ onEditContract, onNewContract }: ContractListProp
 
   const handlePreviewContract = (contract: SavedContract) => {
     setSelectedContract(contract);
+  };
+
+  const handleViewData = (contract: SavedContract) => {
+    setDataToShow(contract.data);
+    setShowDataModal(true);
   };
 
   const formatDate = (dateStr: string) => {
@@ -133,6 +140,13 @@ export function ContractList({ onEditContract, onNewContract }: ContractListProp
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button
+                          onClick={() => handleViewData(contract)}
+                          className="text-purple-600 hover:text-purple-900 p-1 hover:bg-purple-100 rounded transition-colors"
+                          title="View All Data"
+                        >
+                          <Code className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handlePreviewContract(contract)}
                           className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-100 rounded transition-colors"
                           title="Preview"
@@ -159,6 +173,78 @@ export function ContractList({ onEditContract, onNewContract }: ContractListProp
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Raw Data Modal */}
+      {showDataModal && dataToShow && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <Code className="w-5 h-5 text-purple-600" />
+                All Captured Data Fields
+              </h3>
+              <button
+                onClick={() => {
+                  setShowDataModal(false);
+                  setDataToShow(null);
+                }}
+                className="text-slate-400 hover:text-slate-600 p-1"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="bg-slate-50 rounded-lg p-4 mb-4">
+                <p className="text-sm text-slate-700 mb-2">
+                  This shows ALL data fields captured from your Excel upload.
+                  Fields with values are shown below. Empty fields are not displayed.
+                </p>
+                <p className="text-xs text-slate-600">
+                  Total fields captured: <span className="font-bold">{Object.keys(dataToShow).length}</span>
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(dataToShow).map(([key, value]) => (
+                  <div key={key} className="bg-white border border-slate-200 rounded-lg p-3">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                      {key}
+                    </div>
+                    <div className="text-sm text-slate-900 font-mono break-words">
+                      {value === null || value === undefined || value === ''
+                        ? <span className="text-slate-400 italic">empty</span>
+                        : typeof value === 'boolean'
+                          ? value.toString()
+                          : String(value)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDataModal(false);
+                    setDataToShow(null);
+                  }}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(JSON.stringify(dataToShow, null, 2));
+                    alert('Data copied to clipboard!');
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  Copy JSON
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -199,7 +285,7 @@ export function ContractList({ onEditContract, onNewContract }: ContractListProp
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex gap-3">
                 <Button
                   onClick={() => {
