@@ -233,6 +233,12 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
           }
         }
 
+        // Handle banking/text fields - ensure they're strings
+        const textFields = ['BankName', 'BankAccountName', 'BankAccountNo'];
+        if (textFields.includes(leaseKey)) {
+          value = String(value).trim();
+        }
+
         leaseData[leaseKey] = value;
       }
     });
@@ -272,6 +278,16 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
       const contracts: SavedContract[] = [];
       jsonData.forEach((row: any, index: number) => {
         const leaseData = mapExcelRowToLeaseData(row);
+
+        // Debug: Log banking details for first row
+        if (index === 0) {
+          console.log('First row banking details:', {
+            BankName: leaseData.BankName,
+            BankAccountName: leaseData.BankAccountName,
+            BankAccountNo: leaseData.BankAccountNo,
+            rawRow: row
+          });
+        }
 
         if (!leaseData.ContractID) {
           console.warn(`Row ${index + 1}: Skipping - missing Contract ID`);
