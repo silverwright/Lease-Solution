@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useLeaseContext, SavedContract } from '../../context/LeaseContext';
 import { Button } from '../UI/Button';
-import { Upload, FileSpreadsheet, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 interface ExcelBulkUploadProps {
@@ -19,6 +19,385 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();
+  };
+
+  const downloadTemplate = () => {
+    const headers = [
+      'Contract ID', 'Lessee Entity', 'Lessor Name', 'Asset Class', 'Asset Description',
+      'Contract Date', 'Commencement Date', 'Original End Date', 'Non-cancellable Years',
+      'Useful Life Years', 'Fixed Payment Per Period', 'Currency', 'Payment Frequency',
+      'Payment Timing', 'IBR Annual', 'Escalation Type', 'Base CPI', 'CPI Reset Month',
+      'First Reset Year Offset', 'Fixed Escalation Pct', 'Initial Direct Costs',
+      'Prepayments Before Commencement', 'Lease Incentives', 'Prepaid First Payment',
+      'Bank Name', 'Bank Account Name', 'Bank Account No', 'Renewal Option Years',
+      'Renewal Likelihood', 'Termination Option Point', 'Termination Penalty Expected',
+      'Termination Reasonably Certain', 'Purchase Option Price', 'Purchase Option Reasonably Certain',
+      'RVG Expected', 'RVG Reasonably Certain', 'Variable Payments In Substance Fixed',
+      'Variable Payments Usage Expected', 'Low Value Exemption', 'Short Term Exemption',
+      'Separate Non Lease Components', 'Allocation Basis', 'FX Policy', 'Judgement Notes',
+      'Approval Signoff', 'Lessor Jurisdiction', 'Lessee Jurisdiction', 'Lessor Address',
+      'Lessee Address', 'Lessor RC Number', 'Lessee RC Number', 'Asset Location',
+      'Delivery Date Latest', 'Risk Transfer Event', 'Insurance Sum Insured', 'Insurance TP Limit',
+      'Insurer Rating Min', 'Permitted Use', 'Move Restriction', 'Software License',
+      'Arbitration Rules', 'Seat Of Arbitration', 'Language', 'Governing Law',
+      'Lessor Signatory Title', 'Lessee Signatory Title', 'Mode'
+    ];
+
+    const sampleData = [
+      {
+        'Contract ID': 'LC-001',
+        'Lessee Entity': 'ABC Manufacturing Ltd',
+        'Lessor Name': 'Global Leasing Corp',
+        'Asset Class': 'Equipment',
+        'Asset Description': 'Industrial Machinery - CNC Machine',
+        'Contract Date': '2024-01-15',
+        'Commencement Date': '2024-02-01',
+        'Original End Date': '2029-01-31',
+        'Non-cancellable Years': 5,
+        'Useful Life Years': 8,
+        'Fixed Payment Per Period': 50000,
+        'Currency': 'USD',
+        'Payment Frequency': 'Monthly',
+        'Payment Timing': 'In Arrears',
+        'IBR Annual': 5.5,
+        'Escalation Type': 'Fixed',
+        'Base CPI': 2.5,
+        'CPI Reset Month': 'January',
+        'First Reset Year Offset': 1,
+        'Fixed Escalation Pct': 2.0,
+        'Initial Direct Costs': 5000,
+        'Prepayments Before Commencement': 0,
+        'Lease Incentives': 10000,
+        'Prepaid First Payment': 50000,
+        'Bank Name': 'First National Bank',
+        'Bank Account Name': 'Lease Operations',
+        'Bank Account No': '123456789',
+        'Renewal Option Years': 2,
+        'Renewal Likelihood': 'Likely',
+        'Termination Option Point': 'End of Year 3',
+        'Termination Penalty Expected': 5000,
+        'Termination Reasonably Certain': 'No',
+        'Purchase Option Price': 100000,
+        'Purchase Option Reasonably Certain': 'No',
+        'RVG Expected': 50000,
+        'RVG Reasonably Certain': 'Yes',
+        'Variable Payments In Substance Fixed': 'No',
+        'Variable Payments Usage Expected': 0,
+        'Low Value Exemption': 'No',
+        'Short Term Exemption': 'No',
+        'Separate Non Lease Components': 'No',
+        'Allocation Basis': 'Standalone Price',
+        'FX Policy': 'USD Only',
+        'Judgement Notes': 'Standard lease agreement',
+        'Approval Signoff': 'CFO - John Smith',
+        'Lessor Jurisdiction': 'New York',
+        'Lessee Jurisdiction': 'California',
+        'Lessor Address': '100 Finance Ave, New York, NY 10001',
+        'Lessee Address': '500 Tech Drive, San Francisco, CA 94105',
+        'Lessor RC Number': 'RC-001-NY',
+        'Lessee RC Number': 'RC-ABC-CA',
+        'Asset Location': 'San Francisco, CA',
+        'Delivery Date Latest': '2024-01-31',
+        'Risk Transfer Event': 'Commencement Date',
+        'Insurance Sum Insured': 250000,
+        'Insurance TP Limit': 500000,
+        'Insurer Rating Min': 'A',
+        'Permitted Use': 'Manufacturing Operations',
+        'Move Restriction': 'None',
+        'Software License': 'Included',
+        'Arbitration Rules': 'ICC Rules',
+        'Seat Of Arbitration': 'New York',
+        'Language': 'English',
+        'Governing Law': 'New York',
+        'Lessor Signatory Title': 'VP of Leasing',
+        'Lessee Signatory Title': 'CFO',
+        'Mode': 'FULL'
+      },
+      {
+        'Contract ID': 'LC-002',
+        'Lessee Entity': 'Tech Solutions Inc',
+        'Lessor Name': 'Equipment Finance Partners',
+        'Asset Class': 'IT Equipment',
+        'Asset Description': 'Server Hardware and Network Equipment',
+        'Contract Date': '2024-02-01',
+        'Commencement Date': '2024-03-01',
+        'Original End Date': '2027-02-28',
+        'Non-cancellable Years': 3,
+        'Useful Life Years': 5,
+        'Fixed Payment Per Period': 25000,
+        'Currency': 'USD',
+        'Payment Frequency': 'Quarterly',
+        'Payment Timing': 'In Advance',
+        'IBR Annual': 4.8,
+        'Escalation Type': 'CPI',
+        'Base CPI': 3.0,
+        'CPI Reset Month': 'April',
+        'First Reset Year Offset': 1,
+        'Fixed Escalation Pct': 0,
+        'Initial Direct Costs': 2000,
+        'Prepayments Before Commencement': 25000,
+        'Lease Incentives': 5000,
+        'Prepaid First Payment': 25000,
+        'Bank Name': 'Tech Bank',
+        'Bank Account Name': 'Lease Account',
+        'Bank Account No': '987654321',
+        'Renewal Option Years': 1,
+        'Renewal Likelihood': 'Unlikely',
+        'Termination Option Point': 'End of Year 2',
+        'Termination Penalty Expected': 2500,
+        'Termination Reasonably Certain': 'No',
+        'Purchase Option Price': 50000,
+        'Purchase Option Reasonably Certain': 'No',
+        'RVG Expected': 15000,
+        'RVG Reasonably Certain': 'No',
+        'Variable Payments In Substance Fixed': 'No',
+        'Variable Payments Usage Expected': 0,
+        'Low Value Exemption': 'No',
+        'Short Term Exemption': 'No',
+        'Separate Non Lease Components': 'Yes',
+        'Allocation Basis': 'Incremental Borrowing Rate',
+        'FX Policy': 'USD Only',
+        'Judgement Notes': 'Technology refresh lease',
+        'Approval Signoff': 'IT Director - Sarah Johnson',
+        'Lessor Jurisdiction': 'Texas',
+        'Lessee Jurisdiction': 'Illinois',
+        'Lessor Address': '200 Finance Plaza, Houston, TX 77001',
+        'Lessee Address': '300 Tech Park, Chicago, IL 60601',
+        'Lessor RC Number': 'RC-002-TX',
+        'Lessee RC Number': 'RC-TECH-IL',
+        'Asset Location': 'Chicago, IL',
+        'Delivery Date Latest': '2024-02-28',
+        'Risk Transfer Event': 'Delivery Date',
+        'Insurance Sum Insured': 150000,
+        'Insurance TP Limit': 300000,
+        'Insurer Rating Min': 'AA',
+        'Permitted Use': 'IT Operations',
+        'Move Restriction': 'Facilities Only',
+        'Software License': 'Excluded',
+        'Arbitration Rules': 'AAA Rules',
+        'Seat Of Arbitration': 'Chicago',
+        'Language': 'English',
+        'Governing Law': 'Illinois',
+        'Lessor Signatory Title': 'VP of Contracts',
+        'Lessee Signatory Title': 'COO',
+        'Mode': 'FULL'
+      },
+      {
+        'Contract ID': 'LC-003',
+        'Lessee Entity': 'Retail Operations LLC',
+        'Lessor Name': 'Commercial Real Estate Partners',
+        'Asset Class': 'Real Estate',
+        'Asset Description': 'Retail Store Space - 5000 sqft',
+        'Contract Date': '2024-01-20',
+        'Commencement Date': '2024-04-01',
+        'Original End Date': '2034-03-31',
+        'Non-cancellable Years': 10,
+        'Useful Life Years': 25,
+        'Fixed Payment Per Period': 15000,
+        'Currency': 'USD',
+        'Payment Frequency': 'Monthly',
+        'Payment Timing': 'In Advance',
+        'IBR Annual': 6.2,
+        'Escalation Type': 'Fixed',
+        'Base CPI': 0,
+        'CPI Reset Month': '',
+        'First Reset Year Offset': 0,
+        'Fixed Escalation Pct': 3.0,
+        'Initial Direct Costs': 10000,
+        'Prepayments Before Commencement': 30000,
+        'Lease Incentives': 30000,
+        'Prepaid First Payment': 15000,
+        'Bank Name': 'Commercial Bank',
+        'Bank Account Name': 'Real Estate',
+        'Bank Account No': '555666777',
+        'Renewal Option Years': 5,
+        'Renewal Likelihood': 'Very Likely',
+        'Termination Option Point': 'End of Year 5',
+        'Termination Penalty Expected': 50000,
+        'Termination Reasonably Certain': 'Yes',
+        'Purchase Option Price': 500000,
+        'Purchase Option Reasonably Certain': 'Yes',
+        'RVG Expected': 600000,
+        'RVG Reasonably Certain': 'Yes',
+        'Variable Payments In Substance Fixed': 'Yes',
+        'Variable Payments Usage Expected': 5000,
+        'Low Value Exemption': 'No',
+        'Short Term Exemption': 'No',
+        'Separate Non Lease Components': 'No',
+        'Allocation Basis': 'Weighted Average',
+        'FX Policy': 'USD Only',
+        'Judgement Notes': 'Long-term retail space lease',
+        'Approval Signoff': 'CEO - Michael Chen',
+        'Lessor Jurisdiction': 'Florida',
+        'Lessee Jurisdiction': 'Florida',
+        'Lessor Address': '1000 Real Estate Blvd, Miami, FL 33101',
+        'Lessee Address': '2000 Retail Drive, Orlando, FL 32801',
+        'Lessor RC Number': 'RC-003-FL',
+        'Lessee RC Number': 'RC-RETAIL-FL',
+        'Asset Location': 'Orlando, FL',
+        'Delivery Date Latest': '2024-03-31',
+        'Risk Transfer Event': 'Commencement Date',
+        'Insurance Sum Insured': 1000000,
+        'Insurance TP Limit': 2000000,
+        'Insurer Rating Min': 'AA',
+        'Permitted Use': 'Retail Sales',
+        'Move Restriction': 'Location Fixed',
+        'Software License': 'N/A',
+        'Arbitration Rules': 'JAMS Rules',
+        'Seat Of Arbitration': 'Miami',
+        'Language': 'English',
+        'Governing Law': 'Florida',
+        'Lessor Signatory Title': 'Managing Director',
+        'Lessee Signatory Title': 'CEO',
+        'Mode': 'FULL'
+      },
+      {
+        'Contract ID': 'LC-004',
+        'Lessee Entity': 'Fleet Management Co',
+        'Lessor Name': 'Vehicle Leasing International',
+        'Asset Class': 'Vehicles',
+        'Asset Description': 'Commercial Fleet - 50 Vehicles',
+        'Contract Date': '2024-02-10',
+        'Commencement Date': '2024-03-15',
+        'Original End Date': '2026-03-14',
+        'Non-cancellable Years': 2,
+        'Useful Life Years': 4,
+        'Fixed Payment Per Period': 35000,
+        'Currency': 'USD',
+        'Payment Frequency': 'Monthly',
+        'Payment Timing': 'In Arrears',
+        'IBR Annual': 5.0,
+        'Escalation Type': 'None',
+        'Base CPI': 0,
+        'CPI Reset Month': '',
+        'First Reset Year Offset': 0,
+        'Fixed Escalation Pct': 0,
+        'Initial Direct Costs': 7500,
+        'Prepayments Before Commencement': 0,
+        'Lease Incentives': 0,
+        'Prepaid First Payment': 0,
+        'Bank Name': 'Leasing Bank',
+        'Bank Account Name': 'Fleet Operations',
+        'Bank Account No': '444555666',
+        'Renewal Option Years': 1,
+        'Renewal Likelihood': 'Moderate',
+        'Termination Option Point': 'End of Year 1',
+        'Termination Penalty Expected': 10000,
+        'Termination Reasonably Certain': 'No',
+        'Purchase Option Price': 200000,
+        'Purchase Option Reasonably Certain': 'No',
+        'RVG Expected': 150000,
+        'RVG Reasonably Certain': 'Yes',
+        'Variable Payments In Substance Fixed': 'No',
+        'Variable Payments Usage Expected': 0,
+        'Low Value Exemption': 'No',
+        'Short Term Exemption': 'No',
+        'Separate Non Lease Components': 'No',
+        'Allocation Basis': 'Individual Vehicles',
+        'FX Policy': 'USD Only',
+        'Judgement Notes': 'Commercial vehicle fleet',
+        'Approval Signoff': 'Operations Manager - Lisa White',
+        'Lessor Jurisdiction': 'Michigan',
+        'Lessee Jurisdiction': 'Ohio',
+        'Lessor Address': '300 Auto Park, Detroit, MI 48201',
+        'Lessee Address': '400 Transport Way, Columbus, OH 43085',
+        'Lessor RC Number': 'RC-004-MI',
+        'Lessee RC Number': 'RC-FLEET-OH',
+        'Asset Location': 'Columbus, OH',
+        'Delivery Date Latest': '2024-03-14',
+        'Risk Transfer Event': 'Delivery Date',
+        'Insurance Sum Insured': 500000,
+        'Insurance TP Limit': 1000000,
+        'Insurer Rating Min': 'A',
+        'Permitted Use': 'Commercial Transport',
+        'Move Restriction': 'Regional',
+        'Software License': 'Fleet Tracking Software',
+        'Arbitration Rules': 'AAA Rules',
+        'Seat Of Arbitration': 'Cleveland',
+        'Language': 'English',
+        'Governing Law': 'Ohio',
+        'Lessor Signatory Title': 'Account Manager',
+        'Lessee Signatory Title': 'Operations Director',
+        'Mode': 'MINIMAL'
+      },
+      {
+        'Contract ID': 'LC-005',
+        'Lessee Entity': 'Healthcare Systems Group',
+        'Lessor Name': 'Medical Equipment Finance',
+        'Asset Class': 'Medical Equipment',
+        'Asset Description': 'Diagnostic Imaging Equipment',
+        'Contract Date': '2024-03-01',
+        'Commencement Date': '2024-04-15',
+        'Original End Date': '2027-04-14',
+        'Non-cancellable Years': 3,
+        'Useful Life Years': 6,
+        'Fixed Payment Per Period': 18000,
+        'Currency': 'USD',
+        'Payment Frequency': 'Monthly',
+        'Payment Timing': 'In Advance',
+        'IBR Annual': 5.3,
+        'Escalation Type': 'CPI',
+        'Base CPI': 2.5,
+        'CPI Reset Month': 'May',
+        'First Reset Year Offset': 1,
+        'Fixed Escalation Pct': 0,
+        'Initial Direct Costs': 3000,
+        'Prepayments Before Commencement': 18000,
+        'Lease Incentives': 0,
+        'Prepaid First Payment': 18000,
+        'Bank Name': 'Healthcare Finance Bank',
+        'Bank Account Name': 'Medical Division',
+        'Bank Account No': '111222333',
+        'Renewal Option Years': 2,
+        'Renewal Likelihood': 'Likely',
+        'Termination Option Point': 'End of Year 2',
+        'Termination Penalty Expected': 3000,
+        'Termination Reasonably Certain': 'No',
+        'Purchase Option Price': 75000,
+        'Purchase Option Reasonably Certain': 'No',
+        'RVG Expected': 40000,
+        'RVG Reasonably Certain': 'No',
+        'Variable Payments In Substance Fixed': 'No',
+        'Variable Payments Usage Expected': 0,
+        'Low Value Exemption': 'No',
+        'Short Term Exemption': 'No',
+        'Separate Non Lease Components': 'Yes',
+        'Allocation Basis': 'Service Component',
+        'FX Policy': 'USD Only',
+        'Judgement Notes': 'Medical device with maintenance',
+        'Approval Signoff': 'Chief Medical Officer - Dr. Paul Evans',
+        'Lessor Jurisdiction': 'Massachusetts',
+        'Lessee Jurisdiction': 'Massachusetts',
+        'Lessor Address': '500 Medical Plaza, Boston, MA 02101',
+        'Lessee Address': '600 Healthcare Drive, Boston, MA 02115',
+        'Lessor RC Number': 'RC-005-MA',
+        'Lessee RC Number': 'RC-HEALTH-MA',
+        'Asset Location': 'Boston, MA',
+        'Delivery Date Latest': '2024-04-14',
+        'Risk Transfer Event': 'Commencement Date',
+        'Insurance Sum Insured': 300000,
+        'Insurance TP Limit': 600000,
+        'Insurer Rating Min': 'A',
+        'Permitted Use': 'Patient Diagnostics',
+        'Move Restriction': 'Facility Only',
+        'Software License': 'Included',
+        'Arbitration Rules': 'ICC Rules',
+        'Seat Of Arbitration': 'Boston',
+        'Language': 'English',
+        'Governing Law': 'Massachusetts',
+        'Lessor Signatory Title': 'Business Development Manager',
+        'Lessee Signatory Title': 'Chief Financial Officer',
+        'Mode': 'FULL'
+      }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(sampleData, { header: headers });
+    ws['!cols'] = headers.map(() => ({ wch: 18 }));
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Lease Contracts');
+
+    XLSX.writeFile(wb, 'Lease_Template_66_Columns.xlsx');
   };
 
   const mapExcelRowToLeaseData = (row: any) => {
@@ -386,23 +765,33 @@ export function ExcelBulkUpload({ onUploadComplete }: ExcelBulkUploadProps) {
               </p>
             </div>
 
-            <Button
-              onClick={handleFileSelect}
-              disabled={uploading}
-              className="flex items-center gap-2"
-            >
-              {uploading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4" />
-                  Select Excel File
-                </>
-              )}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleFileSelect}
+                disabled={uploading}
+                className="flex items-center gap-2"
+              >
+                {uploading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Select Excel File
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={downloadTemplate}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download Template
+              </Button>
+            </div>
           </div>
         </div>
 
